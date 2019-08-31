@@ -203,11 +203,11 @@ void csonInit(void *malloc, void *free)
 解析json，将json字符串反序列化成结构体对象
 
 ```C
-void *csonDecodeObject(cJSON *json, CsonModel *model, int modelSize)
+void *csonDecode(const char *jsonStr, CsonModel *model, int modelSize)
 ```
 
 - 参数
-  - `json` json字符串
+  - `jsonStr` json字符串
   - `model` 描述目标结构体的数据模型
   - `modelSize` 数据模型大小
 - 返回
