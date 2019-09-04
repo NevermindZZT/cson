@@ -118,7 +118,7 @@ format json: {
 
 ## 结构体数据类型
 
-CSON采用数据模型对结构体进行解析，在方便josn操作的同时，也给结构体的定义带来了一些限制，目前，CSON所支持在结构体中定义的数据类型包括：
+CSON采用数据模型对结构体进行解析，在方便json操作的同时，也给结构体的定义带来了一些限制，目前，CSON所支持在结构体中定义的数据类型包括：
 
 1. 整数(char, short, int, long)
 2. 浮点数(float, double)
@@ -203,11 +203,11 @@ void csonInit(void *malloc, void *free)
 解析json，将json字符串反序列化成结构体对象
 
 ```C
-void *csonDecodeObject(cJSON *json, CsonModel *model, int modelSize)
+void *csonDecode(const char *jsonStr, CsonModel *model, int modelSize)
 ```
 
 - 参数
-  - `json` json字符串
+  - `jsonStr` json字符串
   - `model` 描述目标结构体的数据模型
   - `modelSize` 数据模型大小
 - 返回
