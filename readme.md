@@ -1,7 +1,7 @@
 # CSON
 
-![version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)
-![build](https://img.shields.io/badge/build-2019.8.27-brightgreen.svg)
+![version](https://img.shields.io/badge/version-1.0.1-brightgreen.svg)
+![build](https://img.shields.io/badge/build-2019.9.4-brightgreen.svg)
 
 基于[cJSON](https://github.com/kbranigan/cJSON),运行于C语言平台的json-struct模型解析工具
 

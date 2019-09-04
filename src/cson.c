@@ -245,6 +245,10 @@ void *csonDecodeObject(cJSON *json, CsonModel *model, int modelSize)
 {
     CSON_ASSERT(json, return NULL);
 
+    if (json->type == cJSON_NULL) {
+        return NULL;
+    }
+
     short objSize = 0;
     for (short i = 0; i < modelSize; i++)
     {
@@ -452,7 +456,9 @@ cJSON* csonEncodeArray(void *base, CsonType elementType, short arraySize)
  */
 cJSON* csonEncodeObject(void *obj, CsonModel *model, int modelSize)
 {
-    CSON_ASSERT(obj, return NULL);
+    if (!obj) {
+        return cJSON_CreateNull();
+    }
     cJSON *root = cJSON_CreateObject();
 
     for (short i = 0; i < modelSize; i++)
@@ -461,7 +467,6 @@ cJSON* csonEncodeObject(void *obj, CsonModel *model, int modelSize)
         {
         case CSON_TYPE_CHAR:
             csonEncodeNumber(root, model[i].key, *(char *)((int)obj + model[i].offset));
-            // cJSON_AddNumberToObject(root, model[i].key, *(char *)((int)obj + model[i].offset));
             break;
         case CSON_TYPE_SHORT:
             csonEncodeNumber(root, model[i].key, *(short *)((int)obj + model[i].offset));
@@ -483,7 +488,6 @@ cJSON* csonEncodeObject(void *obj, CsonModel *model, int modelSize)
             break;
         case CSON_TYPE_STRING:
             csonEncodeString(root, model[i].key, (char *)(*(int *)((int)obj + model[i].offset)));
-            // cJSON_AddStringToObject(root, model[i].key, (char *)(*(int *)((int)obj + model[i].offset)));
             break;
         case CSON_TYPE_LIST:
             cJSON_AddItemToObject(root, model[i].key, 
