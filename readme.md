@@ -1,7 +1,8 @@
 # CSON
 
-![version](https://img.shields.io/badge/version-1.0.1-brightgreen.svg)
-![build](https://img.shields.io/badge/build-2019.9.4-brightgreen.svg)
+![version](https://img.shields.io/badge/version-1.0.2-brightgreen.svg)
+![build](https://img.shields.io/badge/build-2019.9.29-brightgreen.svg)
+![license](https://img.shields.io/badge/license-MIT-brightgreen.svg)
 
 基于[cJSON](https://github.com/kbranigan/cJSON),运行于C语言平台的json-struct模型解析工具
 
@@ -126,6 +127,7 @@ CSON采用数据模型对结构体进行解析，在方便json操作的同时，
 4. 基本类型数组(char[], short[], int[], long[], float[], double[], *char[])
 5. 子结构体(指针形式)
 6. 链表(CsonList)
+7. 子json(char *)
 
 其中，为了方便解析，CSON定义了一个专用的链表(CsonList)，用于对json中复杂结构的数组映射
 
@@ -167,20 +169,21 @@ typedef struct cson_model
 
 一般情况下，你只需要使用CSON提供的宏进行数据模型条目的定义，数据模型宏与对应的数据类型对应如下：
 
-| 数据模型宏                                         | 数据类型 | 备注                                               |
-| -------------------------------------------------- | -------- | -------------------------------------------------- |
-| CSON_MODEL_OBJ(type)                               | 结构体   | 用于描述整个结构体，每一个数据模型都需要包含此条目 |
-| CSON_MODEL_CHAR(type, key)                         | char     |                                                    |
-| CSON_MODEL_SHORT(type, key)                        | short    |                                                    |
-| CSON_MODEL_INT(type, key)                          | int      |                                                    |
-| CSON_MODEL_LONG(type, key)                         | long     |                                                    |
-| CSON_MODEL_FLOAT(type, key)                        | float    |                                                    |
-| CSON_MODEL_DOUBLE(type, key)                       | double   |                                                    |
-| CSON_MODEL_BOOL(type, key)                         | bool     | C没有bool,对应为char                               |
-| CSON_MODEL_STRING(type, key)                       | char *   |                                                    |
-| CSON_MODEL_STRUCT(type, key, submodel, subsize)    | 子结构体 | 子结构体必须是结构体指针的形式                     |
-| CSON_MODEL_LIST(type, key, submodel, subsize)      | CsonList | CSON定义的链表                                     |
-| CSON_MODEL_ARRAY(type, key, elementType, arraySize | 数组     | 支持基本数据类型, 数组的每一个元素必须合法         |
+| 数据模型宏                                          | 数据类型 | 备注                                                   |
+| --------------------------------------------------- | -------- | ------------------------------------------------------ |
+| CSON_MODEL_OBJ(type)                                | 结构体   | 用于描述整个结构体，每一个数据模型都需要包含此条目     |
+| CSON_MODEL_CHAR(type, key)                          | char     |                                                        |
+| CSON_MODEL_SHORT(type, key)                         | short    |                                                        |
+| CSON_MODEL_INT(type, key)                           | int      |                                                        |
+| CSON_MODEL_LONG(type, key)                          | long     |                                                        |
+| CSON_MODEL_FLOAT(type, key)                         | float    |                                                        |
+| CSON_MODEL_DOUBLE(type, key)                        | double   |                                                        |
+| CSON_MODEL_BOOL(type, key)                          | bool     | C没有bool,对应为char                                   |
+| CSON_MODEL_STRING(type, key)                        | char *   |                                                        |
+| CSON_MODEL_STRUCT(type, key, submodel, subsize)     | 子结构体 | 子结构体必须是结构体指针的形式                         |
+| CSON_MODEL_LIST(type, key, submodel, subsize)       | CsonList | CSON定义的链表                                         |
+| CSON_MODEL_ARRAY(type, key, elementType, arraySize) | 数组     | 支持基本数据类型, 数组的每一个元素必须合法             |
+| CSON_MODEL_JSON(type, key)                          | 子json   | 将子json直接以字符串解析，或者将json字符串转化为子json |
 
 ## API
 

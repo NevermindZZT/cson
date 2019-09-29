@@ -16,7 +16,7 @@
 #include "cJSON.h"
 
 
-#define     CSON_VERSION        "1.0.1"         /**< CSON版本 */
+#define     CSON_VERSION        "1.0.2"         /**< CSON版本 */
 
 /**
  * @defgroup CSON cson
@@ -44,6 +44,7 @@ typedef enum
     CSON_TYPE_STRUCT,
     CSON_TYPE_LIST,
     CSON_TYPE_ARRAY,
+    CSON_TYPE_JSON,
 } CsonType;
 
 
@@ -209,6 +210,15 @@ extern CsonModel csonBasicListModel[];  /**< 基础类型链表数据模型 */
  */
 #define CSON_MODEL_ARRAY(type, key, elementType, arraySize) \
         {CSON_TYPE_ARRAY, #key, offsetof(type, key), .param.array.eleType=elementType, .param.array.size=arraySize}
+        
+/**
+ * @brief 子json数据模型
+ * 
+ * @param type 对象模型
+ * @param key 数据键值
+ */
+#define CSON_MODEL_JSON(type, key) \
+        {CSON_TYPE_JSON, #key, offsetof(type, key)}
 
 /**
  * @brief CSON断言
@@ -280,7 +290,7 @@ void *csonDecode(const char *jsonStr, CsonModel *model, int modelSize);
  * @param obj 对象
  * @param model 数据模型
  * @param modelSize 数据模型数量
- * @return char* 编码得到的josn字符串
+ * @return char* 编码得到的json字符串
  */
 cJSON* csonEncodeObject(void *obj, CsonModel *model, int modelSize);
 
@@ -290,7 +300,9 @@ cJSON* csonEncodeObject(void *obj, CsonModel *model, int modelSize);
  * @param obj 对象
  * @param model 数据模型
  * @param modelSize 数据模型数量
- * @return char* 编码得到的josn字符串
+ * @param bufferSize 分配给json字符串的空间大小
+ * @param fmt 是否格式化json字符串
+ * @return char* 编码得到的json字符串
  */
 char* csonEncode(void *obj, CsonModel *model, int modelSize, int bufferSize, int fmt);
 

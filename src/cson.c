@@ -186,6 +186,15 @@ void *csonDecodeList(cJSON *json, char *key, CsonModel *model, int modelSize)
 }
 
 
+/**
+ * @brief 解析数组
+ * 
+ * @param json json对象
+ * @param key key
+ * @param base 数组基址
+ * @param elementType 数组元素类型
+ * @param arraySize 数组大小
+ */
 void csonDecodeArray(cJSON *json, char *key, void * base, CsonType elementType, short arraySize)
 {
     cJSON *array = cJSON_GetObjectItem(json, key);
@@ -300,6 +309,10 @@ void *csonDecodeObject(cJSON *json, CsonModel *model, int modelSize)
         case CSON_TYPE_ARRAY:
             csonDecodeArray(json, model[i].key, (void *)((int)obj + model[i].offset), 
                 model[i].param.array.eleType, model[i].param.array.size);
+            break;
+        case CSON_TYPE_JSON:
+            *(int *)((int)obj + model[i].offset) = (int)cJSON_PrintUnformatted(
+                cJSON_GetObjectItem(json, model[i].key));
             break;
         default:
             break;
@@ -452,7 +465,7 @@ cJSON* csonEncodeArray(void *base, CsonType elementType, short arraySize)
  * @param obj 对象
  * @param model 数据模型
  * @param modelSize 数据模型数量
- * @return cJSON* 编码得到的JOSN对象
+ * @return cJSON* 编码得到的json对象
  */
 cJSON* csonEncodeObject(void *obj, CsonModel *model, int modelSize)
 {
@@ -504,6 +517,10 @@ cJSON* csonEncodeObject(void *obj, CsonModel *model, int modelSize)
                 (void *)((int)obj + model[i].offset),
                 model[i].param.array.eleType, model[i].param.array.size));
             break;
+        case CSON_TYPE_JSON:
+            cJSON_AddItemToObject(root, model[i].key, 
+                cJSON_Parse((char *)(*(int *)((int)obj + model[i].offset))));
+            break;
         default:
             break;
         }
@@ -518,7 +535,9 @@ cJSON* csonEncodeObject(void *obj, CsonModel *model, int modelSize)
  * @param obj 对象
  * @param model 数据模型
  * @param modelSize 数据模型数量
- * @return char* 编码得到的josn字符串
+ * @param bufferSize 分配给json字符串的空间大小
+ * @param fmt 是否格式化json字符串
+ * @return char* 编码得到的json字符串
  */
 char* csonEncode(void *obj, CsonModel *model, int modelSize, int bufferSize, int fmt)
 {
@@ -553,6 +572,7 @@ void csonFree(void *obj, CsonModel *model, int modelSize)
         case CSON_TYPE_DOUBLE:
             break;
         case CSON_TYPE_STRING:
+        case CSON_TYPE_JSON:
             cson.free((char *)(*(int *)((int)obj + model[i].offset)));
             break;
         case CSON_TYPE_LIST:

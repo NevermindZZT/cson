@@ -10,7 +10,7 @@
  */
 
 #include "shell.h"
-#include "ulog.h"
+#include "log.h"
 #include "cson.h"
 
 
@@ -32,6 +32,7 @@ struct test
     char *str[2];
     CsonList *charList;
     CsonList *strList;
+    char *subjson;
 };
 
 CsonModel subModel[] = 
@@ -54,7 +55,8 @@ CsonModel model[] =
     CSON_MODEL_LIST(struct test, list, subModel, sizeof(subModel)/sizeof(CsonModel)),
     CSON_MODEL_ARRAY(struct test, str, CSON_TYPE_STRING, 2),
     CSON_MODEL_LIST(struct test, charList, CSON_MODEL_INT_LIST, CSON_BASIC_LIST_MODEL_SIZE),
-    CSON_MODEL_LIST(struct test, strList, CSON_MODEL_STRING_LIST, CSON_BASIC_LIST_MODEL_SIZE)
+    CSON_MODEL_LIST(struct test, strList, CSON_MODEL_STRING_LIST, CSON_BASIC_LIST_MODEL_SIZE),
+    CSON_MODEL_JSON(struct test, subjson)
 };
 
 
@@ -67,19 +69,24 @@ void csonTest(void)
     " \"list\": [{\"id\": 21, \"test\": \"hello cson\"}, {\"id\": 22, \"test\": \"hello letter\"}],"
     "\"str\": [\"array1\", \"array2\"],"
     "\"charList\": [1, 12, 52], "
-    "\"strList\": [\"str1\", \"str2\"]}";
+    "\"strList\": [\"str1\", \"str2\"],"
+    "\"subjson\":{\"test\": \"hello\"}}";
 
     struct test *st = csonDecode(jsonStr, model, sizeof(model)/sizeof(CsonModel));
-    ulogDebug("josn 0x%08x, id: %d, num: %d, max: %d, value: %lf, name: %s\r\nsub: id: %d, test: %s",
-        st, st->id, st->num, st->max, st->value, st->name, st->sub->id, st->sub->test);
-    ulogDebug("str: %s %s", st->str[0], st->str[1]);
+    logDebug("json 0x%08x, id: %d, num: %d, max: %d, value: %lf, name: %s\r\nsub: id: %d, test: %s",
+        st, st->id, st->num, st->max, st->value, st->name, st->sub ? st->sub->id : 0, st->sub ? st->sub->test : "null");
+    logDebug("str: %s %s", st->str[0], st->str[1]);
     CsonList *p = st->list;
     while (p)
     {
         struct subtest *sst = p->obj;
         if (p->obj)
         {
-            ulogDebug("list: id: %d, test: %s", sst->id, sst->test);
+            logDebug("list: id: %d, test: %s", sst->id, sst->test);
+        }
+        else
+        {
+            logDebug("list: null");
         }
         p = p->next;
     }
@@ -89,7 +96,7 @@ void csonTest(void)
         int *sst = p->obj;
         if (p->obj)
         {
-            ulogDebug("list: id: %d", *sst);
+            logDebug("list: id: %d", *sst);
         }
         p = p->next;
     }
@@ -99,10 +106,11 @@ void csonTest(void)
         char **sst = p->obj;
         if (p->obj)
         {
-            ulogDebug("list: id: %s", *sst);
+            logDebug("list: id: %s", *sst);
         }
         p = p->next;
     }
+    logDebug("subjson: %s", st->subjson);
 
     char *root = csonEncode(st, model, sizeof(model)/sizeof(CsonModel), 512, 0);
     printf("encode: %s", root);
