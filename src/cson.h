@@ -16,7 +16,7 @@
 #include "cJSON.h"
 
 
-#define     CSON_VERSION        "1.0.2"         /**< CSON版本 */
+#define     CSON_VERSION        "1.0.3"         /**< CSON版本 */
 
 /**
  * @defgroup CSON cson
@@ -233,30 +233,6 @@ extern CsonModel csonBasicListModel[];  /**< 基础类型链表数据模型 */
         }
 
 /**
- * @brief 对象无格式序列化成json字符串
- * 
- * @param obj 对象
- * @param model 数据模型
- * @param modelSize 数据模型大小
- * 
- * @return char * josn字符串
- */
-#define csonEncodeUnformatted(obj, model, modelSize) \
-        csonEncode(obj, model, modelSize, 256, 0)
-
-/**
- * @brief 对象有格式序列化成json字符串
- * 
- * @param obj 对象
- * @param model 数据模型
- * @param modelSize 数据模型大小
- * 
- * @return char * josn字符串
- */
-#define csonEncodeFormatted(obj, model, modelSize) \
-        csonEncode(obj, model, modelSize, 256, 1)
-
-/**
  * @brief CSON初始化
  * 
  * @param malloc 内存分配函数
@@ -275,6 +251,16 @@ void csonInit(void *malloc, void *free);
 void *csonDecodeObject(cJSON *json, CsonModel *model, int modelSize);
 
 /**
+ * @brief 解析JSON对象
+ * 
+ * @param json JSON对象
+ * @param model 数据模型
+ * @return void* 解析得到的对象
+ */
+#define csonDecodeObjectEx(json, model) \
+        csonDecodeObject(json, model, sizeof(model) / sizeof(CsonModel))
+
+/**
  * @brief 解析JSON字符串
  * 
  * @param jsonStr json字符串
@@ -283,6 +269,16 @@ void *csonDecodeObject(cJSON *json, CsonModel *model, int modelSize);
  * @return void* 解析得到的对象
  */
 void *csonDecode(const char *jsonStr, CsonModel *model, int modelSize);
+
+/**
+ * @brief 解析JSON字符串
+ * 
+ * @param jsonStr json字符串
+ * @param model 数据模型
+ * @return void* 解析得到的对象
+ */
+#define csonDecodeEx(jsonStr, model) \
+        csonDecode(jsonStr, model, sizeof(model) / sizeof(CsonModel));
 
 /**
  * @brief 编码成json字符串
@@ -307,6 +303,38 @@ cJSON* csonEncodeObject(void *obj, CsonModel *model, int modelSize);
 char* csonEncode(void *obj, CsonModel *model, int modelSize, int bufferSize, int fmt);
 
 /**
+ * @brief 编码成json字符串
+ * 
+ * @param obj 对象
+ * @param model 数据模型
+ * @param bufferSize 分配给json字符串的空间大小
+ * @param fmt 是否格式化json字符串
+ * @return char* 编码得到的json字符串
+ */
+#define csonEncodeEx(obj, model, bufferSize, fmt) \
+        csonEncode(obj, model, sizeof(model)/sizeof(CsonModel), bufferSize, fmt)
+
+/**
+ * @brief 编码成json字符串
+ * 
+ * @param obj 对象
+ * @param model 数据模型
+ * @param modelSize 数据模型数量
+ * @return char* 编码得到的json字符串
+ */
+char* csonEncodeUnformatted(void *obj, CsonModel *model, int modelSize);
+
+/**
+ * @brief 编码成json字符串
+ * 
+ * @param obj 对象
+ * @param model 数据模型
+ * @return char* 编码得到的json字符串
+ */
+#define csonEncodeUnformattedEx(obj, model) \
+        csonEncodeUnformatted(obj, model, sizeof(model) / sizeof(CsonModel))
+
+/**
  * @brief 释放CSON解析出的对象
  * 
  * @param obj 对象
@@ -316,12 +344,39 @@ char* csonEncode(void *obj, CsonModel *model, int modelSize, int bufferSize, int
 void csonFree(void *obj, CsonModel *model, int modelSize);
 
 /**
+ * @brief 释放CSON解析出的对象
+ * 
+ * @param obj 对象
+ * @param model 对象模型
+ */
+#define csonFreeEx(obj, model) \
+        csonFree(obj, model, sizeof(model) / sizeof(CsonModel))
+
+/**
  * @brief 释放cson编码生成的json字符串
  * 
  * @param jsonStr json字符串
  */
 void csonFreeJson(const char *jsonStr);
 
+/**
+ * @brief CSON链表添加节点
+ * 
+ * @param list 链表
+ * @param obj 节点对象
+ * @return CsonList 链表
+ */
+CsonList* csonListAdd(CsonList *list, void *obj);
+
+/**
+ * @brief CSON新字符串
+ * 
+ * @param src 源字符串
+ * @return char* 新字符串
+ * @note 此函数用于复制字符串，建议对结构体中字符串成员赋值时，使用此函数，
+ *       方便使用`csonFree`进行内存释放
+ */
+char* csonNewString(const char *src);
 
 /**
  * @}

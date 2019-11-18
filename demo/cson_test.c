@@ -73,7 +73,7 @@ void csonTest(void)
     "\"subjson\":{\"test\": \"hello\"}}";
 
     struct test *st = csonDecode(jsonStr, model, sizeof(model)/sizeof(CsonModel));
-    logDebug("json 0x%08x, id: %d, num: %d, max: %d, value: %lf, name: %s\r\nsub: id: %d, test: %s",
+    logDebug("json 0x%08x, id: %d, num: %d, max: %d, value: %f, name: %s\r\nsub: id: %d, test: %s",
         st, st->id, st->num, st->max, st->value, st->name, st->sub ? st->sub->id : 0, st->sub ? st->sub->test : "null");
     logDebug("str: %s %s", st->str[0], st->str[1]);
     CsonList *p = st->list;
