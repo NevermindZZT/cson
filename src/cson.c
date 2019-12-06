@@ -1,6 +1,6 @@
 /**
  * @file cson.c
- * @author Letter (NevermindZZT@gmail.cn)
+ * @author Letter (NevermindZZT@gmail.com)
  * @brief cson
  * @version 0.1
  * @date 2019-08-26
