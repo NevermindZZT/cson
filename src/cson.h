@@ -228,7 +228,7 @@ extern CsonModel csonBasicListModel[];  /**< 基础类型链表数据模型 */
  */
 #define CSON_ASSERT(expr, action) \
         if (!(expr)) { \
-            printf(#expr " assert failed at file: %s, line: %d", __FILE__, __LINE__); \
+            printf(#expr " assert failed at file: %s, line: %d\r\n", __FILE__, __LINE__); \
             action; \
         }
 
@@ -367,6 +367,16 @@ void csonFreeJson(const char *jsonStr);
  * @return CsonList 链表
  */
 CsonList* csonListAdd(CsonList *list, void *obj);
+
+/**
+ * @brief CSON链表删除节点
+ * 
+ * @param list 链表
+ * @param obj 节点对象
+ * @param freeMem 释放内存
+ * @return CsonList 链表
+ */
+CsonList *csonListDelete(CsonList *list, void *obj, char freeMem);
 
 /**
  * @brief CSON新字符串

@@ -687,6 +687,41 @@ CsonList* csonListAdd(CsonList *list, void *obj)
 
 
 /**
+ * @brief CSON链表删除节点
+ * 
+ * @param list 链表
+ * @param obj 节点对象
+ * @param freeMem 释放内存
+ * @return CsonList 链表
+ */
+CsonList *csonListDelete(CsonList *list, void *obj, char freeMem)
+{
+    CSON_ASSERT(list, return NULL);
+
+    CsonList head = {0};
+    head.next = list;
+    CsonList *p = &head;
+    CsonList *tmp;
+    while (p->next)
+    {
+        if (p->next->obj && p->next->obj == obj)
+        {
+            tmp = p->next;
+            p->next = p->next->next ? p->next->next : NULL;
+            if (freeMem)
+            {
+                cson.free(tmp->obj);
+                cson.free(tmp);
+            }
+            break;
+        }
+        p = p->next;
+    }
+    return head.next;
+}
+
+
+/**
  * @brief CSON新字符串
  * 
  * @param src 源字符串
