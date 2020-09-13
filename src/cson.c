@@ -63,6 +63,12 @@ void csonInit(void *malloc, void *free)
 }
 
 
+signed char csonIsBasicListModel(CsonModel *model)
+{
+    return (model >= &csonBasicListModel[0] && model <= &csonBasicListModel[13]) ? 1 : 0;
+}
+
+
 /**
  * @brief 解析JSON整型
  * 
@@ -167,7 +173,16 @@ void *csonDecodeList(cJSON *json, char *key, CsonModel *model, int modelSize)
     {
         for (short i = 0; i < cJSON_GetArraySize(array); i++)
         {
-            list = csonListAdd(list, csonDecodeObject(cJSON_GetArrayItem(array, i), model, modelSize));
+            void *obj = csonDecodeObject(cJSON_GetArrayItem(array, i), model, modelSize);
+            if (csonIsBasicListModel(model))
+            {
+                list = csonListAdd(list, (void *)(*((int *)obj)));
+                cson.free(obj);
+            }
+            else
+            {
+                list = csonListAdd(list, obj);
+            }
         }
     }
     return list;
@@ -391,7 +406,14 @@ cJSON* csonEncodeList(CsonList *list, CsonModel *model, int modelSize)
     {
         if (p->obj)
         {
-            item = csonEncodeObject(p->obj, model, modelSize);
+            if (csonIsBasicListModel(model))
+            {
+                item = csonEncodeObject(&(p->obj), model, modelSize);
+            }
+            else
+            {
+                item = csonEncodeObject(p->obj, model, modelSize);
+            }
             cJSON_AddItemToArray(root, item);
         }
         p = p->next;
@@ -577,6 +599,7 @@ char* csonEncodeUnformatted(void *obj, CsonModel *model, int modelSize)
 void csonFree(void *obj, CsonModel *model, int modelSize)
 {
     CsonList *list, *p;
+    void *tmpNode;
 
     for (short i = 0; i < modelSize; i++)
     {
@@ -601,7 +624,8 @@ void csonFree(void *obj, CsonModel *model, int modelSize)
                 list = list->next;
                 if (p->obj)
                 {
-                    csonFree(p->obj, 
+                    tmpNode =  csonIsBasicListModel(model[i].param.sub.model) ? &(p->obj) : p->obj;
+                    csonFree(tmpNode, 
                         model[i].param.sub.model, model[i].param.sub.size);
                 }
                 cson.free(p);

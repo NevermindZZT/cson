@@ -16,7 +16,7 @@
 #include "cJSON.h"
 
 
-#define     CSON_VERSION        "1.0.3"         /**< CSON版本 */
+#define     CSON_VERSION        "1.0.4"         /**< CSON版本 */
 
 /**
  * @defgroup CSON cson

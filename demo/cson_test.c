@@ -93,20 +93,20 @@ void csonTest(void)
     p = st->charList;
     while (p)
     {
-        int *sst = p->obj;
+        int sst = (int)(p->obj);
         if (p->obj)
         {
-            logDebug("list: id: %d", *sst);
+            logDebug("list: int: %d", sst);
         }
         p = p->next;
     }
     p = st->strList;
     while (p)
     {
-        char **sst = p->obj;
+        char *sst = p->obj;
         if (p->obj)
         {
-            logDebug("list: id: %s", *sst);
+            logDebug("list: str: %s", sst);
         }
         p = p->next;
     }
@@ -118,7 +118,8 @@ void csonTest(void)
     csonFreeJson(root);
     csonFree(st, model, sizeof(model)/sizeof(CsonModel));
 }
-SHELL_EXPORT_CMD(csonTest, csonTest, test);
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC),
+csonTest, csonTest, test);
 
 
 /** 项目结构体 */
@@ -164,7 +165,7 @@ void csonDemo(void)
         pHub->id, pHub->user, pHub->cson->id, pHub->cson->name);
 
     /** 序列化对象 */
-    char *formatJson = csonEncodeFormatted(pHub, hubModel, sizeof(hubModel)/sizeof(CsonModel));
+    char *formatJson = csonEncode(pHub, hubModel, sizeof(hubModel)/sizeof(CsonModel), 512, 1);
     printf("format json: %s\r\n", formatJson);
 
     /** 释放结构体对象 */
@@ -173,5 +174,5 @@ void csonDemo(void)
     /** 释放序列化生成的json字符串 */
     csonFreeJson(formatJson);
 }
-SHELL_EXPORT_CMD(csonDemo, csonDemo, test);
-
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC),
+csonDemo, csonDemo, test);
