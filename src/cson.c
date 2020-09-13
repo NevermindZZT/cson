@@ -599,7 +599,7 @@ char* csonEncodeUnformatted(void *obj, CsonModel *model, int modelSize)
 void csonFree(void *obj, CsonModel *model, int modelSize)
 {
     CsonList *list, *p;
-    void *tmpNode;
+    int *tmpNode;
 
     for (short i = 0; i < modelSize; i++)
     {
@@ -624,7 +624,15 @@ void csonFree(void *obj, CsonModel *model, int modelSize)
                 list = list->next;
                 if (p->obj)
                 {
-                    tmpNode =  csonIsBasicListModel(model[i].param.sub.model) ? &(p->obj) : p->obj;
+                    if (csonIsBasicListModel(model[i].param.sub.model))
+                    {
+                        tmpNode = cson.malloc(sizeof(int));
+                        *tmpNode = (int)(&(p->obj));
+                    }
+                    else
+                    {
+                        tmpNode = p->obj;
+                    }
                     csonFree(tmpNode, 
                         model[i].param.sub.model, model[i].param.sub.size);
                 }
