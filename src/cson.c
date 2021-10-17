@@ -295,7 +295,7 @@ void *csonDecodeObject(cJSON *json, CsonModel *model, int modelSize)
             *(double *)((int)obj + model[i].offset) = csonDecodeDouble(json, model[i].key);
             break;
         case CSON_TYPE_BOOL:
-            *(char *)((int)obj + model[i].offset) = (char)csonDecodeNumber(json, model[i].key);
+            *(char *)((int)obj + model[i].offset) = (char)csonDecodeBool(json, model[i].key);
             break;
         case CSON_TYPE_STRING:
             *(int *)((int)obj + model[i].offset) = (int)csonDecodeString(json, model[i].key);
